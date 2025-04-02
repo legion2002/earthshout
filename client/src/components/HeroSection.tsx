@@ -1,5 +1,5 @@
 import { useWallet } from '@/contexts/WalletContext';
-import { Broadcast, Info } from 'lucide-react';
+import { Radio, Info } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
 export default function HeroSection() {
@@ -26,7 +26,7 @@ export default function HeroSection() {
           onClick={handleCreateShout}
           className="bg-accent hover:bg-accent/90 text-accent-foreground px-6 py-3"
         >
-          <Broadcast className="h-5 w-5 mr-2" />
+          <Radio className="h-5 w-5 mr-2" />
           Create Earthshout
         </Button>
         <Button 

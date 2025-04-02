@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Link, useLocation } from 'wouter';
 import { useWallet } from '@/contexts/WalletContext';
-import { Earth, Home, Fire, PlusCircle, Wallet, User, Menu } from 'lucide-react';
+import { Earth, Home, Flame, PlusCircle, Wallet, User, Menu } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { truncateAddress } from '@/lib/utils';
 
@@ -39,7 +39,7 @@ export default function Navbar() {
                   <a className={`flex items-center px-3 py-2 rounded-md text-sm font-medium transition-colors duration-200 ${
                     location === '/top-shouts' ? 'text-foreground' : 'text-muted-foreground hover:text-foreground'
                   }`}>
-                    <Fire className="h-4 w-4 mr-2" />
+                    <Flame className="h-4 w-4 mr-2" />
                     Top Shouts
                   </a>
                 </Link>
@@ -107,7 +107,7 @@ export default function Navbar() {
               <a className={`flex items-center px-3 py-2 rounded-md text-base font-medium ${
                 location === '/top-shouts' ? 'text-foreground' : 'text-muted-foreground'
               }`}>
-                <Fire className="h-5 w-5 mr-2" />
+                <Flame className="h-5 w-5 mr-2" />
                 Top Shouts
               </a>
             </Link>
