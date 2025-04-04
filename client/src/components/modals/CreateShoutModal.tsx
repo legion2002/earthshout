@@ -6,7 +6,7 @@ import { z } from 'zod';
 import { useWallet } from '@/contexts/WalletContext';
 import { queryClient, apiRequest } from '@/lib/queryClient';
 import { createEarthshout } from '@/lib/ethereum';
-import { Megaphone, Info } from 'lucide-react';
+import { Megaphone, Info, X } from 'lucide-react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogDescription, DialogClose } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import {
@@ -135,6 +135,16 @@ export default function CreateShoutModal() {
   return (
     <Dialog open={isCreateShoutModalOpen} onOpenChange={closeCreateShoutModal}>
       <DialogContent className="sm:max-w-md">
+        <button 
+          onClick={closeCreateShoutModal}
+          className="absolute right-4 top-4 rounded-sm opacity-70 transition-opacity hover:opacity-100 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:pointer-events-none"
+          aria-label="Close"
+        >
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="h-4 w-4">
+            <line x1="18" y1="6" x2="6" y2="18"></line>
+            <line x1="6" y1="6" x2="18" y2="18"></line>
+          </svg>
+        </button>
         <DialogHeader>
           <DialogTitle className="text-base font-medium font-display">Create New Earthshout</DialogTitle>
           <DialogDescription className="text-xs text-muted-foreground">
