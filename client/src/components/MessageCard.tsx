@@ -1,4 +1,4 @@
-import { Share, Eye, CheckCircle2, User } from 'lucide-react';
+import { Share, User, ExternalLink } from 'lucide-react';
 import { formatDistanceToNow } from 'date-fns';
 import { truncateAddress } from '@/lib/utils';
 import type { Message } from '@shared/schema';
@@ -42,9 +42,7 @@ export default function MessageCard({ message }: MessageCardProps) {
                     ? message.senderAddress 
                     : truncateAddress(message.senderAddress)
                   }
-                  <span className="ml-2 inline-flex items-center px-1.5 py-0.5 rounded-full text-xs font-medium bg-primary/10 text-primary">
-                    <CheckCircle2 className="h-3 w-3 mr-1" /> Verified
-                  </span>
+
                 </div>
                 <div className="text-xs text-muted-foreground">{formattedDate}</div>
               </div>
@@ -66,9 +64,14 @@ export default function MessageCard({ message }: MessageCardProps) {
                 <Share className="h-3 w-3 mr-1" /> Share
               </button>
               <span className="mx-2">•</span>
-              <span>
-                <Eye className="h-3 w-3 mr-1 inline-block" /> {message.views.toLocaleString()} views
-              </span>
+              <a 
+                href={`https://etherscan.io/address/${message.senderAddress}`} 
+                target="_blank" 
+                rel="noopener noreferrer"
+                className="flex items-center hover:text-foreground transition-colors duration-200"
+              >
+                <ExternalLink className="h-3 w-3 mr-1" /> Etherscan
+              </a>
             </div>
           </div>
         </div>

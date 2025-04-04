@@ -48,7 +48,7 @@ export default function MessageFeed({ minEth }: MessageFeedProps) {
       <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-6 gap-3">
         <h2 className="text-xl font-display font-medium">
           {sortBy === 'eth' && 'Top Earthshouts'}
-          {sortBy === 'views' && 'Most Viewed Earthshouts'}
+          {sortBy === 'recent' && 'Recent Earthshouts'}
         </h2>
         <div className="flex items-center">
           <span className="text-muted-foreground text-sm mr-2">Sort by:</span>
@@ -58,7 +58,7 @@ export default function MessageFeed({ minEth }: MessageFeedProps) {
             </SelectTrigger>
             <SelectContent>
               <SelectItem value="eth">Most Burned</SelectItem>
-              <SelectItem value="views">Most Viewed</SelectItem>
+              <SelectItem value="recent">Most Recent</SelectItem>
             </SelectContent>
           </Select>
         </div>

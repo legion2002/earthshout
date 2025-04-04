@@ -6,7 +6,7 @@ import { z } from 'zod';
 import { useWallet } from '@/contexts/WalletContext';
 import { queryClient, apiRequest } from '@/lib/queryClient';
 import { createEarthshout } from '@/lib/ethereum';
-import { Send, Info, X } from 'lucide-react';
+import { Megaphone, Info, X } from 'lucide-react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import {
@@ -230,7 +230,7 @@ export default function CreateShoutModal() {
                 disabled={isPending || !form.formState.isValid}
                 className="text-sm"
               >
-                <Send className="h-3 w-3 mr-2" />
+                <Megaphone className="h-3 w-3 mr-2" />
                 Broadcast
               </Button>
             </DialogFooter>

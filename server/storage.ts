@@ -57,8 +57,11 @@ export class MemStorage implements IStorage {
     // Sort messages
     if (sortBy === "eth") {
       filteredMessages.sort((a, b) => b.ethBurned - a.ethBurned);
-    } else if (sortBy === "views") {
-      filteredMessages.sort((a, b) => b.views - a.views);
+    } else if (sortBy === "recent") {
+      // Sort by most recent
+      filteredMessages.sort((a, b) => 
+        new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+      );
     } else {
       // Default sort by recent
       filteredMessages.sort((a, b) => 

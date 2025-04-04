@@ -1,5 +1,5 @@
 import { useWallet } from '@/contexts/WalletContext';
-import { Radio, Info } from 'lucide-react';
+import { Megaphone, Info } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
 export default function HeroSection() {
@@ -28,7 +28,7 @@ export default function HeroSection() {
           size="lg"
           className="font-medium"
         >
-          <Radio className="h-4 w-4 mr-2" />
+          <Megaphone className="h-4 w-4 mr-2" />
           Create Earthshout
         </Button>
         <Button 
