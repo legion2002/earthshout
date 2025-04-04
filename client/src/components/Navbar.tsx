@@ -50,25 +50,29 @@ export default function Navbar() {
           </div>
           <div className="hidden md:block">
             <div className="ml-4 flex items-center md:ml-6">
-              {isConnected ? (
-                <div className="flex items-center">
-                  <Button variant="default" className="mr-3">
-                    <Wallet className="h-4 w-4 mr-2" />
-                    {truncateAddress(address || '')}
-                  </Button>
-                  <Button 
-                    variant="outline" 
-                    size="icon" 
-                    className="text-primary rounded-md"
-                  >
-                    <User className="h-5 w-5" />
-                  </Button>
-                </div>
-              ) : (
-                <Button onClick={openWalletModal}>
-                  <Wallet className="h-4 w-4 mr-2" />
-                  Connect Wallet
-                </Button>
+              {location === '/create-shout' && (
+                <>
+                  {isConnected ? (
+                    <div className="flex items-center">
+                      <Button variant="default" className="mr-3">
+                        <Wallet className="h-4 w-4 mr-2" />
+                        {truncateAddress(address || '')}
+                      </Button>
+                      <Button 
+                        variant="outline" 
+                        size="icon" 
+                        className="text-primary rounded-md"
+                      >
+                        <User className="h-5 w-5" />
+                      </Button>
+                    </div>
+                  ) : (
+                    <Button onClick={openWalletModal}>
+                      <Wallet className="h-4 w-4 mr-2" />
+                      Connect Wallet
+                    </Button>
+                  )}
+                </>
               )}
             </div>
           </div>
@@ -107,7 +111,7 @@ export default function Navbar() {
               <PlusCircle className="h-5 w-5 mr-2" />
               Shout
             </Link>
-            {!isConnected && (
+            {location === '/create-shout' && !isConnected && (
               <Button 
                 onClick={openWalletModal}
                 className="w-full mt-2"
