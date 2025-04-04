@@ -31,16 +31,8 @@ export default function Navbar() {
                   <a className={`flex items-center px-3 py-2 rounded-md text-sm font-medium transition-colors duration-200 ${
                     location === '/' ? 'text-foreground' : 'text-muted-foreground hover:text-foreground'
                   }`}>
-                    <Home className="h-4 w-4 mr-2" />
-                    Home
-                  </a>
-                </Link>
-                <Link href="/top-shouts">
-                  <a className={`flex items-center px-3 py-2 rounded-md text-sm font-medium transition-colors duration-200 ${
-                    location === '/top-shouts' ? 'text-foreground' : 'text-muted-foreground hover:text-foreground'
-                  }`}>
                     <Flame className="h-4 w-4 mr-2" />
-                    Top Shouts
+                    Listen
                   </a>
                 </Link>
                 <Link href="/create-shout">
@@ -48,7 +40,7 @@ export default function Navbar() {
                     location === '/create-shout' ? 'text-primary' : 'text-primary hover:text-foreground'
                   }`}>
                     <PlusCircle className="h-4 w-4 mr-2" />
-                    Create Shout
+                    Shout
                   </a>
                 </Link>
               </div>
@@ -99,16 +91,8 @@ export default function Navbar() {
               <a className={`flex items-center px-3 py-2 rounded-md text-base font-medium ${
                 location === '/' ? 'text-foreground' : 'text-muted-foreground'
               }`}>
-                <Home className="h-5 w-5 mr-2" />
-                Home
-              </a>
-            </Link>
-            <Link href="/top-shouts">
-              <a className={`flex items-center px-3 py-2 rounded-md text-base font-medium ${
-                location === '/top-shouts' ? 'text-foreground' : 'text-muted-foreground'
-              }`}>
                 <Flame className="h-5 w-5 mr-2" />
-                Top Shouts
+                Listen
               </a>
             </Link>
             <Link href="/create-shout">
@@ -116,7 +100,7 @@ export default function Navbar() {
                 location === '/create-shout' ? 'text-primary' : 'text-primary'
               }`}>
                 <PlusCircle className="h-5 w-5 mr-2" />
-                Create Shout
+                Shout
               </a>
             </Link>
             {!isConnected && (

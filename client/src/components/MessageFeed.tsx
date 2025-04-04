@@ -11,7 +11,7 @@ type MessageFeedProps = {
 };
 
 export default function MessageFeed({ minEth }: MessageFeedProps) {
-  const [sortBy, setSortBy] = useState<string>("recent");
+  const [sortBy, setSortBy] = useState<string>("eth");
 
   const { data: messages, isLoading, isError, refetch } = useQuery<Message[]>({
     queryKey: ['/api/messages', minEth, sortBy],
@@ -46,7 +46,11 @@ export default function MessageFeed({ minEth }: MessageFeedProps) {
   return (
     <section className="mb-8">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-6 gap-3">
-        <h2 className="text-xl font-display font-medium">Recent Earthshouts</h2>
+        <h2 className="text-xl font-display font-medium">
+          {sortBy === 'eth' && 'Top Earthshouts'}
+          {sortBy === 'recent' && 'Recent Earthshouts'}
+          {sortBy === 'views' && 'Most Viewed Earthshouts'}
+        </h2>
         <div className="flex items-center">
           <span className="text-muted-foreground text-sm mr-2">Sort by:</span>
           <Select value={sortBy} onValueChange={handleSortChange}>
@@ -54,8 +58,8 @@ export default function MessageFeed({ minEth }: MessageFeedProps) {
               <SelectValue placeholder="Sort by" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="recent">Most Recent</SelectItem>
               <SelectItem value="eth">Highest ETH Burned</SelectItem>
+              <SelectItem value="recent">Most Recent</SelectItem>
               <SelectItem value="views">Most Viewed</SelectItem>
             </SelectContent>
           </Select>
