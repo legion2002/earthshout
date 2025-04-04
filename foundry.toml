@@ -1,0 +1,6 @@
+[profile.default]
+src = "contracts/src"
+out = "contracts/out"
+libs = ["contracts/node_modules", "contracts/lib"]
+
+# See more config options https://github.com/foundry-rs/foundry/blob/master/crates/config/README.md#all-options
