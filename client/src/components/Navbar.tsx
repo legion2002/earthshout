@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Link, useLocation } from 'wouter';
 import { useWallet } from '@/contexts/WalletContext';
-import { Earth, Home, Flame, PlusCircle, Wallet, User, Menu } from 'lucide-react';
+import { Earth, Ear, Megaphone, Wallet, User, Menu } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { truncateAddress } from '@/lib/utils';
 
@@ -38,7 +38,7 @@ export default function Navbar() {
                     : 'text-muted-foreground hover:text-foreground hover:bg-background/80'
                 }`}
               >
-                <Flame className="h-4 w-4 mr-2" />
+                <Ear className="h-4 w-4 mr-2" />
                 Listen
               </Link>
               <Link 
@@ -49,7 +49,7 @@ export default function Navbar() {
                     : 'text-muted-foreground hover:text-foreground hover:bg-background/80'
                 }`}
               >
-                <PlusCircle className="h-4 w-4 mr-2" />
+                <Megaphone className="h-4 w-4 mr-2" />
                 Shout
               </Link>
             </div>
@@ -108,7 +108,7 @@ export default function Navbar() {
                     : 'text-muted-foreground hover:text-foreground hover:bg-background/80'
                 }`}
               >
-                <Flame className="h-5 w-5 mr-2" />
+                <Ear className="h-5 w-5 mr-2" />
                 Listen
               </Link>
               <Link 
@@ -119,7 +119,7 @@ export default function Navbar() {
                     : 'text-muted-foreground hover:text-foreground hover:bg-background/80'
                 }`}
               >
-                <PlusCircle className="h-5 w-5 mr-2" />
+                <Megaphone className="h-5 w-5 mr-2" />
                 Shout
               </Link>
             </div>
