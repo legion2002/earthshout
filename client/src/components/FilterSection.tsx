@@ -19,7 +19,7 @@ export default function FilterSection({ onFilterChange }: FilterSectionProps) {
   };
 
   return (
-    <section className="mb-8 bg-muted rounded-xl p-4 sm:p-6">
+    <section className="mb-8 border border-border rounded-md p-4 sm:p-6">
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
           <h2 className="text-xl font-display font-medium mb-2">Filter Earthshouts</h2>
@@ -45,12 +45,12 @@ export default function FilterSection({ onFilterChange }: FilterSectionProps) {
               </div>
             </div>
           </div>
-          <div className="flex items-center gap-2 bg-background px-3 py-2 rounded-lg">
-            <span className="font-mono text-accent">{minEth.toFixed(1)} ETH</span>
+          <div className="flex items-center gap-2 bg-secondary px-3 py-2 rounded-md">
+            <span className="font-mono text-primary">{minEth.toFixed(1)} ETH</span>
             <span className="text-xs text-muted-foreground">minimum</span>
           </div>
           <div className="flex items-center">
-            <Button className="bg-primary" onClick={handleApplyFilter}>
+            <Button variant="default" onClick={handleApplyFilter}>
               Apply Filter
             </Button>
           </div>

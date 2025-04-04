@@ -134,19 +134,19 @@ export default function CreateShoutModal() {
 
   return (
     <Dialog open={isCreateShoutModalOpen} onOpenChange={closeCreateShoutModal}>
-      <DialogContent className="sm:max-w-lg">
+      <DialogContent className="sm:max-w-md">
         <DialogHeader>
-          <DialogTitle className="text-lg font-medium font-display">Create New Earthshout</DialogTitle>
+          <DialogTitle className="text-base font-medium font-display">Create New Earthshout</DialogTitle>
         </DialogHeader>
         
         <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-5">
+          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4 pt-2">
             <FormField
               control={form.control}
               name="ethAmount"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel className="text-muted-foreground">ETH Amount to Burn</FormLabel>
+                  <FormLabel className="text-sm font-medium">ETH Amount to Burn</FormLabel>
                   <FormControl>
                     <div className="relative">
                       <Input 
@@ -155,14 +155,14 @@ export default function CreateShoutModal() {
                         min="0.01" 
                         step="0.01"
                         {...field}
-                        className="pr-12"
+                        className="pr-12 h-9"
                       />
                       <div className="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
-                        <span className="text-muted-foreground">ETH</span>
+                        <span className="text-muted-foreground text-sm">ETH</span>
                       </div>
                     </div>
                   </FormControl>
-                  <FormDescription>
+                  <FormDescription className="text-xs">
                     ≈ ${usdValue.toFixed(2)} USD
                   </FormDescription>
                   <FormMessage />
@@ -175,13 +175,14 @@ export default function CreateShoutModal() {
               name="message"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel className="text-muted-foreground">Your Message</FormLabel>
+                  <FormLabel className="text-sm font-medium">Your Message</FormLabel>
                   <FormControl>
                     <Textarea 
                       placeholder="What do you want to tell the world?" 
                       maxLength={500}
-                      rows={4}
+                      rows={3}
                       {...field}
+                      className="resize-none"
                     />
                   </FormControl>
                   <div className="flex justify-end mt-1">
@@ -192,12 +193,10 @@ export default function CreateShoutModal() {
               )}
             />
 
-            <Alert variant="outline" className="bg-background">
-              <Info className="h-4 w-4 text-accent" />
-              <AlertDescription>
-                <h3 className="font-medium text-foreground mb-1">Important Information</h3>
-                <p className="text-sm text-muted-foreground">ETH sent will be permanently burned, and cannot be recovered.</p>
-                <p className="text-sm text-muted-foreground mt-1">Your message will be publicly viewable on the blockchain forever.</p>
+            <Alert className="bg-background border border-border py-2">
+              <Info className="h-4 w-4 text-primary" />
+              <AlertDescription className="text-xs">
+                <span className="font-medium text-foreground">Important:</span> ETH sent will be permanently burned and your message will be publicly viewable on the blockchain forever.
               </AlertDescription>
             </Alert>
 
@@ -205,7 +204,7 @@ export default function CreateShoutModal() {
               control={form.control}
               name="confirmBurn"
               render={({ field }) => (
-                <FormItem className="flex flex-row items-start space-x-3 space-y-0">
+                <FormItem className="flex flex-row items-start space-x-2 space-y-0">
                   <FormControl>
                     <Checkbox
                       checked={field.value}
@@ -213,7 +212,7 @@ export default function CreateShoutModal() {
                     />
                   </FormControl>
                   <div className="space-y-1 leading-none">
-                    <FormLabel>
+                    <FormLabel className="text-sm font-normal">
                       I understand and confirm I want to burn ETH
                     </FormLabel>
                   </div>
@@ -221,17 +220,18 @@ export default function CreateShoutModal() {
               )}
             />
             
-            <DialogFooter className="flex justify-end space-x-2">
-              <Button type="button" variant="outline" onClick={closeCreateShoutModal}>
+            <DialogFooter className="flex justify-end space-x-2 pt-2">
+              <Button type="button" variant="outline" size="sm" onClick={closeCreateShoutModal} className="text-sm">
                 Cancel
               </Button>
               <Button 
                 type="submit"
+                size="sm"
                 disabled={isPending || !form.formState.isValid}
-                className="bg-primary"
+                className="text-sm"
               >
-                <Send className="h-4 w-4 mr-2" />
-                Broadcast Earthshout
+                <Send className="h-3 w-3 mr-2" />
+                Broadcast
               </Button>
             </DialogFooter>
           </form>

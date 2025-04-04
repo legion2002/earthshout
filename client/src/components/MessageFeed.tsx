@@ -28,29 +28,29 @@ export default function MessageFeed({ minEth }: MessageFeedProps) {
 
   if (isLoading) {
     return (
-      <div className="flex justify-center items-center h-60">
-        <Loader className="h-8 w-8 animate-spin text-primary" />
+      <div className="flex justify-center items-center h-40">
+        <Loader className="h-6 w-6 animate-spin text-primary" />
       </div>
     );
   }
 
   if (isError) {
     return (
-      <div className="flex justify-center items-center h-60 flex-col">
-        <p className="text-destructive mb-4">Failed to load messages</p>
-        <Button onClick={() => refetch()}>Try Again</Button>
+      <div className="flex justify-center items-center h-40 flex-col">
+        <p className="text-muted-foreground mb-3">Failed to load messages</p>
+        <Button variant="outline" size="sm" onClick={() => refetch()}>Try Again</Button>
       </div>
     );
   }
 
   return (
     <section className="mb-8">
-      <div className="flex items-center justify-between mb-6">
-        <h2 className="text-2xl font-display font-medium">Recent Earthshouts</h2>
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-6 gap-3">
+        <h2 className="text-xl font-display font-medium">Recent Earthshouts</h2>
         <div className="flex items-center">
           <span className="text-muted-foreground text-sm mr-2">Sort by:</span>
           <Select value={sortBy} onValueChange={handleSortChange}>
-            <SelectTrigger className="w-[180px]">
+            <SelectTrigger className="w-[160px] h-9 text-sm">
               <SelectValue placeholder="Sort by" />
             </SelectTrigger>
             <SelectContent>
@@ -63,21 +63,21 @@ export default function MessageFeed({ minEth }: MessageFeedProps) {
       </div>
 
       {messages && messages.length > 0 ? (
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           {messages.map((message) => (
             <MessageCard key={message.id} message={message} />
           ))}
         </div>
       ) : (
-        <div className="text-center py-10 bg-muted rounded-lg">
+        <div className="text-center py-8 border border-border rounded-md">
           <p className="text-muted-foreground">No messages found matching your filter criteria.</p>
         </div>
       )}
 
       {messages && messages.length > 0 && (
-        <div className="flex justify-center mt-8">
-          <Button variant="outline" onClick={() => refetch()}>
-            <RefreshCw className="h-4 w-4 mr-2" />
+        <div className="flex justify-center mt-6">
+          <Button variant="outline" size="sm" onClick={() => refetch()} className="text-sm">
+            <RefreshCw className="h-3 w-3 mr-2" />
             Load More
           </Button>
         </div>

@@ -15,14 +15,14 @@ export default function Navbar() {
   };
 
   return (
-    <nav className="sticky top-0 z-50 backdrop-blur-md bg-background/90 border-b border-muted">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <nav className="sticky top-0 z-50 bg-background border-b border-muted">
+      <div className="max-w-6xl mx-auto px-4">
         <div className="flex items-center justify-between h-16">
           <div className="flex items-center">
             <div className="flex-shrink-0">
               <Link href="/" className="flex items-center">
                 <Earth className="h-6 w-6 text-primary mr-2" />
-                <span className="font-display font-bold text-xl">Earth<span className="text-accent">shout</span></span>
+                <span className="font-display font-bold text-xl">Earth<span className="text-primary">shout</span></span>
               </Link>
             </div>
             <div className="hidden md:block">
@@ -63,9 +63,9 @@ export default function Navbar() {
                     {truncateAddress(address || '')}
                   </Button>
                   <Button 
-                    variant="ghost" 
+                    variant="outline" 
                     size="icon" 
-                    className="bg-muted text-muted-foreground hover:text-foreground rounded-full"
+                    className="text-primary rounded-md"
                   >
                     <User className="h-5 w-5" />
                   </Button>
