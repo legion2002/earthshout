@@ -27,21 +27,23 @@ export default function Navbar() {
             </div>
             <div className="hidden md:block">
               <div className="ml-10 flex items-baseline space-x-4">
-                <Link href="/">
-                  <a className={`flex items-center px-3 py-2 rounded-md text-sm font-medium transition-colors duration-200 ${
+                <Link 
+                  href="/"
+                  className={`flex items-center px-3 py-2 rounded-md text-sm font-medium transition-colors duration-200 ${
                     location === '/' ? 'text-foreground' : 'text-muted-foreground hover:text-foreground'
-                  }`}>
-                    <Flame className="h-4 w-4 mr-2" />
-                    Listen
-                  </a>
+                  }`}
+                >
+                  <Flame className="h-4 w-4 mr-2" />
+                  Listen
                 </Link>
-                <Link href="/create-shout">
-                  <a className={`flex items-center px-3 py-2 rounded-md text-sm font-medium transition-colors duration-200 ${
+                <Link 
+                  href="/create-shout"
+                  className={`flex items-center px-3 py-2 rounded-md text-sm font-medium transition-colors duration-200 ${
                     location === '/create-shout' ? 'text-primary' : 'text-primary hover:text-foreground'
-                  }`}>
-                    <PlusCircle className="h-4 w-4 mr-2" />
-                    Shout
-                  </a>
+                  }`}
+                >
+                  <PlusCircle className="h-4 w-4 mr-2" />
+                  Shout
                 </Link>
               </div>
             </div>
@@ -87,21 +89,23 @@ export default function Navbar() {
       {mobileMenuOpen && (
         <div className="md:hidden border-b border-muted">
           <div className="px-2 pt-2 pb-3 space-y-1 sm:px-3">
-            <Link href="/">
-              <a className={`flex items-center px-3 py-2 rounded-md text-base font-medium ${
+            <Link 
+              href="/"
+              className={`flex items-center px-3 py-2 rounded-md text-base font-medium ${
                 location === '/' ? 'text-foreground' : 'text-muted-foreground'
-              }`}>
-                <Flame className="h-5 w-5 mr-2" />
-                Listen
-              </a>
+              }`}
+            >
+              <Flame className="h-5 w-5 mr-2" />
+              Listen
             </Link>
-            <Link href="/create-shout">
-              <a className={`flex items-center px-3 py-2 rounded-md text-base font-medium ${
+            <Link 
+              href="/create-shout"
+              className={`flex items-center px-3 py-2 rounded-md text-base font-medium ${
                 location === '/create-shout' ? 'text-primary' : 'text-primary'
-              }`}>
-                <PlusCircle className="h-5 w-5 mr-2" />
-                Shout
-              </a>
+              }`}
+            >
+              <PlusCircle className="h-5 w-5 mr-2" />
+              Shout
             </Link>
             {!isConnected && (
               <Button 
