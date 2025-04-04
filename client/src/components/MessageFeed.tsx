@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { Button } from '@/components/ui/button';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Loader, RefreshCw, Flame, Eye } from 'lucide-react';
+import { Loader, RefreshCw } from 'lucide-react';
 import MessageCard from './MessageCard';
 import type { Message } from '@shared/schema';
 
@@ -47,24 +47,9 @@ export default function MessageFeed({ minEth }: MessageFeedProps) {
     <section className="mb-8">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-6 gap-3">
         <h2 className="text-xl font-display font-medium">
-          {sortBy === 'eth' && (
-            <span className="flex items-center">
-              <Flame className="h-5 w-5 mr-2 text-red-500" /> 
-              <span>Top Earthshouts</span>
-            </span>
-          )}
-          {sortBy === 'recent' && (
-            <span className="flex items-center">
-              <RefreshCw className="h-5 w-5 mr-2 text-green-500" /> 
-              <span>Recent Earthshouts</span>
-            </span>
-          )}
-          {sortBy === 'views' && (
-            <span className="flex items-center">
-              <Eye className="h-5 w-5 mr-2 text-blue-500" /> 
-              <span>Most Viewed Earthshouts</span>
-            </span>
-          )}
+          {sortBy === 'eth' && 'Top Earthshouts'}
+          {sortBy === 'recent' && 'Recent Earthshouts'}
+          {sortBy === 'views' && 'Most Viewed Earthshouts'}
         </h2>
         <div className="flex items-center">
           <span className="text-muted-foreground text-sm mr-2">Sort by:</span>
@@ -73,21 +58,9 @@ export default function MessageFeed({ minEth }: MessageFeedProps) {
               <SelectValue placeholder="Sort by" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="eth" className="flex items-center">
-                <span className="flex items-center text-red-600">
-                  <Flame className="h-4 w-4 mr-2 inline" /> Highest ETH Burned
-                </span>
-              </SelectItem>
-              <SelectItem value="recent" className="flex items-center">
-                <span className="flex items-center text-green-600">
-                  <RefreshCw className="h-4 w-4 mr-2 inline" /> Most Recent
-                </span>
-              </SelectItem>
-              <SelectItem value="views" className="flex items-center">
-                <span className="flex items-center text-blue-600">
-                  <Eye className="h-4 w-4 mr-2 inline" /> Most Viewed
-                </span>
-              </SelectItem>
+              <SelectItem value="eth">Highest ETH Burned</SelectItem>
+              <SelectItem value="recent">Most Recent</SelectItem>
+              <SelectItem value="views">Most Viewed</SelectItem>
             </SelectContent>
           </Select>
         </div>
