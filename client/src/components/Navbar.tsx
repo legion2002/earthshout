@@ -1,13 +1,20 @@
 import { useState } from 'react';
 import { Link, useLocation } from 'wouter';
 import { useWallet } from '@/contexts/WalletContext';
-import { Earth, Ear, Megaphone, Wallet, User, Menu } from 'lucide-react';
+import { Earth, Ear, Megaphone, Wallet, User, Menu, LogOut, ExternalLink } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { truncateAddress } from '@/lib/utils';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
 export default function Navbar() {
   const [location] = useLocation();
-  const { isConnected, address, openWalletModal } = useWallet();
+  const { isConnected, address, openWalletModal, disconnectWallet } = useWallet();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   const toggleMobileMenu = () => {
@@ -64,13 +71,34 @@ export default function Navbar() {
                         <Wallet className="h-4 w-4 mr-2" />
                         {truncateAddress(address || '')}
                       </Button>
-                      <Button 
-                        variant="outline" 
-                        size="icon" 
-                        className="text-primary rounded-md"
-                      >
-                        <User className="h-5 w-5" />
-                      </Button>
+                      <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                          <Button 
+                            variant="outline" 
+                            size="icon" 
+                            className="text-primary rounded-md"
+                          >
+                            <User className="h-5 w-5" />
+                          </Button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent align="end">
+                          <DropdownMenuItem 
+                            className="cursor-pointer" 
+                            onClick={() => window.open(`https://etherscan.io/address/${address}`, '_blank')}
+                          >
+                            <ExternalLink className="h-4 w-4 mr-2" />
+                            View on Etherscan
+                          </DropdownMenuItem>
+                          <DropdownMenuSeparator />
+                          <DropdownMenuItem 
+                            className="cursor-pointer text-destructive focus:text-destructive" 
+                            onClick={disconnectWallet}
+                          >
+                            <LogOut className="h-4 w-4 mr-2" />
+                            Disconnect Wallet
+                          </DropdownMenuItem>
+                        </DropdownMenuContent>
+                      </DropdownMenu>
                     </div>
                   ) : (
                     <Button onClick={openWalletModal}>
@@ -123,14 +151,47 @@ export default function Navbar() {
                 Shout
               </Link>
             </div>
-            {location === '/create-shout' && !isConnected && (
-              <Button 
-                onClick={openWalletModal}
-                className="w-full mt-2"
-              >
-                <Wallet className="h-5 w-5 mr-2" />
-                Connect Wallet
-              </Button>
+            {location === '/create-shout' && (
+              <>
+                {isConnected ? (
+                  <div className="mt-2 space-y-2">
+                    <div className="flex items-center justify-between p-3 bg-primary/5 rounded-md border border-border">
+                      <div className="flex items-center">
+                        <Wallet className="h-5 w-5 text-primary mr-2" />
+                        <span>{truncateAddress(address || '')}</span>
+                      </div>
+                    </div>
+                    <div className="grid grid-cols-2 gap-2">
+                      <Button 
+                        variant="outline"
+                        size="sm"
+                        className="w-full"
+                        onClick={() => window.open(`https://etherscan.io/address/${address}`, '_blank')}
+                      >
+                        <ExternalLink className="h-4 w-4 mr-2" />
+                        Etherscan
+                      </Button>
+                      <Button 
+                        variant="outline"
+                        size="sm"
+                        className="w-full text-destructive border-destructive/30 hover:bg-destructive/10"
+                        onClick={disconnectWallet}
+                      >
+                        <LogOut className="h-4 w-4 mr-2" />
+                        Disconnect
+                      </Button>
+                    </div>
+                  </div>
+                ) : (
+                  <Button 
+                    onClick={openWalletModal}
+                    className="w-full mt-2"
+                  >
+                    <Wallet className="h-5 w-5 mr-2" />
+                    Connect Wallet
+                  </Button>
+                )}
+              </>
             )}
           </div>
         </div>
