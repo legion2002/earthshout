@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+// No longer need useEffect
 import { useLocation } from 'wouter';
 import { useWallet } from '@/contexts/WalletContext';
 import { Button } from '@/components/ui/button';
@@ -9,12 +9,8 @@ export default function CreateShout() {
   const [, setLocation] = useLocation();
   const { isConnected, openWalletModal, openCreateShoutModal } = useWallet();
 
-  useEffect(() => {
-    // Automatically open the create shout modal when navigating to this page
-    if (isConnected) {
-      openCreateShoutModal();
-    }
-  }, [isConnected, openCreateShoutModal]);
+  // We no longer automatically open the modal when wallet is connected
+  // Users will need to click the "Create Earthshout" button
 
   const handleCreateShout = () => {
     if (isConnected) {
