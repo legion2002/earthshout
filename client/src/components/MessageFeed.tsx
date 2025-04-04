@@ -65,7 +65,7 @@ export default function MessageFeed({ minEth }: MessageFeedProps) {
       </div>
 
       {messages && messages.length > 0 ? (
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div className="flex flex-col space-y-4">
           {messages.map((message) => (
             <MessageCard key={message.id} message={message} />
           ))}

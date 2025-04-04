@@ -25,45 +25,52 @@ export default function MessageCard({ message }: MessageCardProps) {
   };
 
   return (
-    <div className="bg-background rounded-md overflow-hidden border border-border hover:shadow-sm transition-all duration-200">
-      <div className="p-4">
-        <div className="flex items-start justify-between mb-3">
-          <div className="flex items-center">
-            <div className="border border-border rounded-full w-8 h-8 flex items-center justify-center">
-              <User className="text-primary h-4 w-4" />
+    <div className="bg-background rounded-lg overflow-hidden border border-border hover:shadow-sm transition-all duration-200">
+      <div className="p-5">
+        <div className="flex items-start gap-4">
+          <div className="flex-shrink-0">
+            <div className="bg-muted/40 border border-border rounded-full w-10 h-10 flex items-center justify-center shadow-sm">
+              <User className="text-primary h-5 w-5" />
             </div>
-            <div className="ml-2">
-              <div className="font-medium text-foreground">
-                {message.senderAddress.includes('.eth') 
-                  ? message.senderAddress 
-                  : truncateAddress(message.senderAddress)
-                }
+          </div>
+          
+          <div className="flex-grow min-w-0">
+            <div className="flex items-center justify-between gap-2 mb-2">
+              <div>
+                <div className="font-medium text-foreground flex items-center">
+                  {message.senderAddress.includes('.eth') 
+                    ? message.senderAddress 
+                    : truncateAddress(message.senderAddress)
+                  }
+                  <span className="ml-2 inline-flex items-center px-1.5 py-0.5 rounded-full text-xs font-medium bg-primary/10 text-primary">
+                    <CheckCircle2 className="h-3 w-3 mr-1" /> Verified
+                  </span>
+                </div>
+                <div className="text-xs text-muted-foreground">{formattedDate}</div>
               </div>
-              <div className="text-xs text-muted-foreground">{formattedDate}</div>
+              
+              <div className="flex-shrink-0 bg-primary/5 border border-primary/30 px-2.5 py-1 rounded-full text-primary text-sm font-mono font-medium">
+                {message.ethBurned.toFixed(1)} ETH
+              </div>
+            </div>
+            
+            <div className="mb-3">
+              <p className="text-foreground">{message.content}</p>
+            </div>
+            
+            <div className="flex items-center text-muted-foreground text-xs mt-2">
+              <button 
+                className="flex items-center hover:text-foreground transition-colors duration-200"
+                onClick={handleShare}
+              >
+                <Share className="h-3 w-3 mr-1" /> Share
+              </button>
+              <span className="mx-2">•</span>
+              <span>
+                <Eye className="h-3 w-3 mr-1 inline-block" /> {message.views.toLocaleString()} views
+              </span>
             </div>
           </div>
-          <div className="border border-primary/30 px-2 py-1 rounded-md text-primary text-sm font-mono font-medium">
-            {message.ethBurned.toFixed(1)} ETH
-          </div>
-        </div>
-        <div className="mb-3">
-          <p className="text-foreground">{message.content}</p>
-        </div>
-        <div className="flex items-center text-muted-foreground text-xs">
-          <button 
-            className="flex items-center hover:text-foreground transition-colors duration-200"
-            onClick={handleShare}
-          >
-            <Share className="h-3 w-3 mr-1" /> Share
-          </button>
-          <span className="mx-2">•</span>
-          <span>
-            <Eye className="h-3 w-3 mr-1 inline-block" /> {message.views.toLocaleString()} views
-          </span>
-          <span className="mx-2">•</span>
-          <span className="text-primary">
-            <CheckCircle2 className="h-3 w-3 mr-1 inline-block" /> Verified
-          </span>
         </div>
       </div>
     </div>

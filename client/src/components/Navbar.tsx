@@ -25,27 +25,33 @@ export default function Navbar() {
                 <span className="font-display font-bold text-xl">Earth<span className="text-primary">shout</span></span>
               </Link>
             </div>
-            <div className="hidden md:block">
-              <div className="ml-10 flex items-baseline space-x-4">
-                <Link 
-                  href="/"
-                  className={`flex items-center px-3 py-2 rounded-md text-sm font-medium transition-colors duration-200 ${
-                    location === '/' ? 'text-foreground' : 'text-muted-foreground hover:text-foreground'
-                  }`}
-                >
-                  <Flame className="h-4 w-4 mr-2" />
-                  Listen
-                </Link>
-                <Link 
-                  href="/create-shout"
-                  className={`flex items-center px-3 py-2 rounded-md text-sm font-medium transition-colors duration-200 ${
-                    location === '/create-shout' ? 'text-primary' : 'text-primary hover:text-foreground'
-                  }`}
-                >
-                  <PlusCircle className="h-4 w-4 mr-2" />
-                  Shout
-                </Link>
-              </div>
+          </div>
+          
+          {/* Centered navigation tabs */}
+          <div className="hidden md:flex items-center justify-center flex-grow mx-4">
+            <div className="inline-flex bg-muted/30 rounded-full p-1 shadow-sm border border-border">
+              <Link 
+                href="/"
+                className={`flex items-center px-5 py-1.5 rounded-full text-sm font-medium transition-all duration-200 ${
+                  location === '/' 
+                    ? 'bg-primary text-primary-foreground shadow-sm' 
+                    : 'text-muted-foreground hover:text-foreground hover:bg-background/80'
+                }`}
+              >
+                <Flame className="h-4 w-4 mr-2" />
+                Listen
+              </Link>
+              <Link 
+                href="/create-shout"
+                className={`flex items-center px-5 py-1.5 rounded-full text-sm font-medium transition-all duration-200 ${
+                  location === '/create-shout' 
+                    ? 'bg-primary text-primary-foreground shadow-sm' 
+                    : 'text-muted-foreground hover:text-foreground hover:bg-background/80'
+                }`}
+              >
+                <PlusCircle className="h-4 w-4 mr-2" />
+                Shout
+              </Link>
             </div>
           </div>
           <div className="hidden md:block">
@@ -92,25 +98,31 @@ export default function Navbar() {
       {/* Mobile menu */}
       {mobileMenuOpen && (
         <div className="md:hidden border-b border-muted">
-          <div className="px-2 pt-2 pb-3 space-y-1 sm:px-3">
-            <Link 
-              href="/"
-              className={`flex items-center px-3 py-2 rounded-md text-base font-medium ${
-                location === '/' ? 'text-foreground' : 'text-muted-foreground'
-              }`}
-            >
-              <Flame className="h-5 w-5 mr-2" />
-              Listen
-            </Link>
-            <Link 
-              href="/create-shout"
-              className={`flex items-center px-3 py-2 rounded-md text-base font-medium ${
-                location === '/create-shout' ? 'text-primary' : 'text-primary'
-              }`}
-            >
-              <PlusCircle className="h-5 w-5 mr-2" />
-              Shout
-            </Link>
+          <div className="p-3 space-y-2">
+            <div className="bg-muted/30 rounded-lg p-1.5 shadow-sm border border-border flex flex-col">
+              <Link 
+                href="/"
+                className={`flex items-center px-4 py-2 rounded-md text-base font-medium transition-all duration-200 ${
+                  location === '/' 
+                    ? 'bg-primary text-primary-foreground shadow-sm' 
+                    : 'text-muted-foreground hover:text-foreground hover:bg-background/80'
+                }`}
+              >
+                <Flame className="h-5 w-5 mr-2" />
+                Listen
+              </Link>
+              <Link 
+                href="/create-shout"
+                className={`flex items-center px-4 py-2 rounded-md text-base font-medium transition-all duration-200 mt-1 ${
+                  location === '/create-shout' 
+                    ? 'bg-primary text-primary-foreground shadow-sm' 
+                    : 'text-muted-foreground hover:text-foreground hover:bg-background/80'
+                }`}
+              >
+                <PlusCircle className="h-5 w-5 mr-2" />
+                Shout
+              </Link>
+            </div>
             {location === '/create-shout' && !isConnected && (
               <Button 
                 onClick={openWalletModal}
