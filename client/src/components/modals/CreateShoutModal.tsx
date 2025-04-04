@@ -6,8 +6,8 @@ import { z } from 'zod';
 import { useWallet } from '@/contexts/WalletContext';
 import { queryClient, apiRequest } from '@/lib/queryClient';
 import { createEarthshout } from '@/lib/ethereum';
-import { Megaphone, Info, X } from 'lucide-react';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog';
+import { Megaphone, Info } from 'lucide-react';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogDescription, DialogClose } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import {
   Form,
@@ -137,6 +137,9 @@ export default function CreateShoutModal() {
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
           <DialogTitle className="text-base font-medium font-display">Create New Earthshout</DialogTitle>
+          <DialogDescription className="text-xs text-muted-foreground">
+            Burn ETH to broadcast your message to the world
+          </DialogDescription>
         </DialogHeader>
         
         <Form {...form}>
