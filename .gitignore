@@ -8,3 +8,6 @@ vite.config.ts.*
 .vscode
 .cursor
 contracts/lib
+contracts/out
+contracts/cache
+cache/
