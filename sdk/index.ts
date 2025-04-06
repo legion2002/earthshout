@@ -7,7 +7,8 @@ const EARTHSHOUT_ABI = [
 ];
 
 // This would be the deployed contract address in production
-const EARTHSHOUT_CONTRACT_ADDRESS = "0x0000000000000000000000000000000000000000";
+const EARTHSHOUT_CONTRACT_ADDRESS =
+  "0xDB875C7987584ED9Ccec95da132501eCeB145b13";
 
 export class EarthshoutSDK {
   private provider: ethers.Provider;
