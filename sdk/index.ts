@@ -1,10 +1,5 @@
-import { ethers } from 'ethers';
-
-// ABI for the EarthShout contract
-const EARTHSHOUT_ABI = [
-  "function shout(string message) external payable",
-  "event Shout(address indexed sender, string message, uint256 amount, uint256 timestamp)"
-];
+import { ethers } from "ethers";
+import { EARTHSHOUT_ABI } from "./abi";
 
 // This would be the deployed contract address in production
 const EARTHSHOUT_CONTRACT_ADDRESS =
@@ -20,7 +15,11 @@ export class EarthshoutSDK {
    */
   constructor(providerUrl: string) {
     this.provider = new ethers.JsonRpcProvider(providerUrl);
-    this.contract = new ethers.Contract(EARTHSHOUT_CONTRACT_ADDRESS, EARTHSHOUT_ABI, this.provider);
+    this.contract = new ethers.Contract(
+      EARTHSHOUT_CONTRACT_ADDRESS,
+      EARTHSHOUT_ABI,
+      this.provider
+    );
   }
 
   /**
@@ -46,9 +45,15 @@ export class EarthshoutSDK {
     const filter = this.contract.filters.Shout();
 
     // Event handler for the Shout event
-    const handleShout = (sender: string, message: string, amount: bigint, timestamp: bigint, event: any) => {
+    const handleShout = (
+      sender: string,
+      message: string,
+      amount: bigint,
+      timestamp: bigint,
+      event: any
+    ) => {
       const ethAmount = ethers.formatEther(amount);
-      
+
       // Filter messages by minimum ETH burned
       if (parseFloat(ethAmount) >= minEthBurned) {
         callback({
@@ -56,7 +61,7 @@ export class EarthshoutSDK {
           content: message,
           ethBurned: ethAmount,
           timestamp: new Date(Number(timestamp) * 1000),
-          transactionHash: event.log.transactionHash
+          transactionHash: event.log.transactionHash,
         });
       }
     };
@@ -85,32 +90,24 @@ export class EarthshoutSDK {
       toBlock?: number | string;
     } = {}
   ) {
-    const {
-      minEthBurned = 0,
-      fromBlock = 0,
-      toBlock = 'latest'
-    } = options;
+    const { minEthBurned = 0, fromBlock = 0, toBlock = "latest" } = options;
 
     // Create a filter for the Shout event
     const filter = this.contract.filters.Shout();
 
     // Query historical events
-    const events = await this.contract.queryFilter(
-      filter,
-      fromBlock,
-      toBlock
-    );
+    const events = await this.contract.queryFilter(filter, fromBlock, toBlock);
 
     // Process and filter the events
     const messages = await Promise.all(
       events.map(async (event: any) => {
         const [sender, message, amount, timestamp] = event.args || [];
         const ethAmount = ethers.formatEther(amount);
-        
+
         // Filter by minimum ETH burned
         if (parseFloat(ethAmount) >= minEthBurned) {
           const block = await event.getBlock();
-          
+
           return {
             sender,
             content: message,
@@ -118,17 +115,17 @@ export class EarthshoutSDK {
             timestamp: new Date(Number(timestamp) * 1000),
             transactionHash: event.transactionHash,
             blockNumber: event.blockNumber,
-            blockTimestamp: new Date(block.timestamp * 1000)
+            blockTimestamp: new Date(block.timestamp * 1000),
           };
         }
-        
+
         return null;
       })
     );
 
     // Filter out null values and sort by timestamp (newest first)
     return messages
-      .filter(msg => msg !== null)
+      .filter((msg) => msg !== null)
       .sort((a, b) => b!.timestamp.getTime() - a!.timestamp.getTime());
   }
 
@@ -140,13 +137,13 @@ export class EarthshoutSDK {
     // Get all Shout events
     const filter = this.contract.filters.Shout();
     const events = await this.contract.queryFilter(filter);
-    
+
     // Sum up the ETH burned
     const totalBurned = events.reduce((total, event) => {
       const amount = event.args![2]; // The amount is the third argument
       return total + BigInt(amount.toString());
     }, BigInt(0));
-    
+
     return ethers.formatEther(totalBurned);
   }
 
@@ -158,7 +155,7 @@ export class EarthshoutSDK {
   async getTopMessages(limit: number = 10) {
     // Get all Shout events
     const allMessages = await this.getHistoricalMessages();
-    
+
     // Sort by ETH burned (highest first) and limit results
     return allMessages
       .sort((a, b) => parseFloat(b!.ethBurned) - parseFloat(a!.ethBurned))
