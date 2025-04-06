@@ -1,5 +1,4 @@
 import { z } from "zod";
-import { Prisma } from "@prisma/client";
 
 // Export Prisma types
 export type User = {
@@ -9,15 +8,25 @@ export type User = {
   walletAddress: string | null;
 };
 
-export type Message = {
+export type Earthshout = {
   id: number;
   senderAddress: string;
-  content: string;
-  ethBurned: number;
+  content: string | null;
+
+  // On-chain data
+  yeetId: number;
+  tokenAddress: string;
+  amountBurned: number;
   transactionHash: string;
-  createdAt: Date;
-  verified: boolean;
-  views: number;
+  blockNumber: number;
+  timestamp: Date;
+
+  // Gift information (optional)
+  recipientAddress: string | null;
+  giftAmount: number | null;
+
+  // Boost information
+  boostForYeetId: number | null;
 };
 
 // Define insert schemas using Zod
@@ -27,12 +36,22 @@ export const insertUserSchema = z.object({
   walletAddress: z.string().max(42).optional().nullable(),
 });
 
-export const insertMessageSchema = z.object({
+export const insertEarthshoutSchema = z.object({
   senderAddress: z.string().max(42),
-  content: z.string(),
-  ethBurned: z.number(),
+  content: z.string().nullable().optional(),
+  yeetId: z.number(),
+  tokenAddress: z.string().max(42),
+  amountBurned: z.number(),
   transactionHash: z.string().max(66),
+  blockNumber: z.number(),
+  timestamp: z
+    .date()
+    .optional()
+    .default(() => new Date()),
+  recipientAddress: z.string().max(42).nullable().optional(),
+  giftAmount: z.number().nullable().optional(),
+  boostForYeetId: z.number().nullable().optional(),
 });
 
 export type InsertUser = z.infer<typeof insertUserSchema>;
-export type InsertMessage = z.infer<typeof insertMessageSchema>;
+export type InsertEarthshout = z.infer<typeof insertEarthshoutSchema>;

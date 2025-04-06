@@ -1,9 +1,9 @@
-import { useState } from 'react';
-import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { apiRequest } from '@/lib/queryClient';
-import { createEarthshout } from '@/lib/ethereum';
-import { useWallet } from '@/contexts/WalletContext';
-import { useToast } from '@/hooks/use-toast';
+import { useState } from "react";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { apiRequest } from "@/lib/queryClient";
+import { createYeet } from "@/lib/ethereum";
+import { useWallet } from "@/contexts/WalletContext";
+import { useToast } from "@/hooks/use-toast";
 
 export function useEarthshout() {
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -18,10 +18,10 @@ export function useEarthshout() {
       ethBurned: number;
       transactionHash: string;
     }) => {
-      return apiRequest('POST', '/api/messages', data);
+      return apiRequest("POST", "/api/earthshouts", data);
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['/api/messages'] });
+      queryClient.invalidateQueries({ queryKey: ["/api/earthshouts"] });
       toast({
         title: "Earthshout created!",
         description: "Your message has been broadcast to the world.",
@@ -48,17 +48,20 @@ export function useEarthshout() {
 
     setIsSubmitting(true);
     try {
+      // Use ETH address (zero address) as token
+      const zeroAddress =
+        "0x0000000000000000000000000000000000000000" as `0x${string}`;
       // Call contract to burn ETH
-      const tx = await createEarthshout(ethAmount, message);
-      
+      const tx = await createYeet(zeroAddress, ethAmount.toString(), message);
+
       // Save the message to our database
       createMessage({
         senderAddress: address,
         content: message,
         ethBurned: ethAmount,
-        transactionHash: tx.hash
+        transactionHash: tx.hash,
       });
-      
+
       setIsSubmitting(false);
       return true;
     } catch (error: any) {
@@ -75,6 +78,6 @@ export function useEarthshout() {
 
   return {
     sendEarthshout,
-    isSubmitting
+    isSubmitting,
   };
 }

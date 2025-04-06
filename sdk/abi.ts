@@ -1,3 +1,6 @@
+export const VOID_CONTRACT_ADDRESS =
+  "0xDB875C7987584ED9Ccec95da132501eCeB145b13";
+
 export const EARTHSHOUT_ABI = [
   {
     type: "fallback",

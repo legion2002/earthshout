@@ -1,70 +1,83 @@
 import type { Express } from "express";
 import { createServer, type Server } from "http";
 import { storage } from "./storage";
-import { insertMessageSchema } from "@shared/schema";
+import { insertEarthshoutSchema } from "@shared/schema";
 import { z } from "zod";
 
 export async function registerRoutes(app: Express): Promise<Server> {
   // Seed the database with sample data if it's empty
-  if ('seedDatabaseIfEmpty' in storage) {
+  if ("seedDatabaseIfEmpty" in storage) {
     await (storage as any).seedDatabaseIfEmpty();
   }
-  // API routes for messages
-  app.get("/api/messages", async (req, res) => {
+
+  // API routes for earthshouts
+  app.get("/api/earthshouts", async (req, res) => {
     try {
-      const minEthFilter = req.query.minEth ? parseFloat(req.query.minEth as string) : 0;
-      const sortBy = req.query.sortBy as string || "recent";
-      const messages = await storage.getMessages(minEthFilter, sortBy);
-      res.json(messages);
+      const minAmount = req.query.minAmount
+        ? parseFloat(req.query.minAmount as string)
+        : 0;
+      const tokenAddress = (req.query.tokenAddress as string) || undefined;
+      const sortBy = (req.query.sortBy as string) || "recent";
+
+      const earthshouts = await storage.getEarthshouts({
+        minAmount,
+        tokenAddress,
+        sortBy,
+      });
+
+      res.json(earthshouts);
     } catch (error) {
-      console.error("Error fetching messages:", error);
-      res.status(500).json({ message: "Failed to fetch messages" });
+      console.error("Error fetching earthshouts:", error);
+      res.status(500).json({ message: "Failed to fetch earthshouts" });
     }
   });
 
-  app.get("/api/messages/:id", async (req, res) => {
+  app.get("/api/earthshouts/:id", async (req, res) => {
     try {
       const id = parseInt(req.params.id);
       if (isNaN(id)) {
-        return res.status(400).json({ message: "Invalid message ID" });
+        return res.status(400).json({ message: "Invalid earthshout ID" });
       }
-      
-      const message = await storage.getMessage(id);
-      if (!message) {
-        return res.status(404).json({ message: "Message not found" });
+
+      const earthshout = await storage.getEarthshout(id);
+      if (!earthshout) {
+        return res.status(404).json({ message: "Earthshout not found" });
       }
-      
-      // Increment view count
-      await storage.incrementMessageViews(id);
-      res.json(message);
+
+      res.json(earthshout);
     } catch (error) {
-      console.error("Error fetching message:", error);
-      res.status(500).json({ message: "Failed to fetch message" });
+      console.error("Error fetching earthshout:", error);
+      res.status(500).json({ message: "Failed to fetch earthshout" });
     }
   });
 
-  app.post("/api/messages", async (req, res) => {
+  app.post("/api/earthshouts", async (req, res) => {
     try {
-      const messageData = insertMessageSchema.parse(req.body);
-      const newMessage = await storage.createMessage(messageData);
-      res.status(201).json(newMessage);
+      const earthshoutData = insertEarthshoutSchema.parse(req.body);
+      const newEarthshout = await storage.createEarthshout(earthshoutData);
+      res.status(201).json(newEarthshout);
     } catch (error) {
       if (error instanceof z.ZodError) {
-        return res.status(400).json({ message: "Invalid message data", errors: error.errors });
+        return res
+          .status(400)
+          .json({ message: "Invalid earthshout data", errors: error.errors });
       }
-      console.error("Error creating message:", error);
-      res.status(500).json({ message: "Failed to create message" });
+      console.error("Error creating earthshout:", error);
+      res.status(500).json({ message: "Failed to create earthshout" });
     }
   });
 
-  app.get("/api/eth-price", async (_req, res) => {
+  app.get("/api/token-prices", async (req, res) => {
     try {
-      // In a real app, we would fetch the ETH price from an API like CoinGecko
-      // For this demo, we'll return a hardcoded value
-      res.json({ usd: 3500 });
+      // In a real app, we would fetch token prices from an API
+      // For this demo, we'll return hardcoded values
+      res.json({
+        "0x0000000000000000000000000000000000000000": 3500, // ETH price in USD
+        // Add other token prices as needed
+      });
     } catch (error) {
-      console.error("Error fetching ETH price:", error);
-      res.status(500).json({ message: "Failed to fetch ETH price" });
+      console.error("Error fetching token prices:", error);
+      res.status(500).json({ message: "Failed to fetch token prices" });
     }
   });
 

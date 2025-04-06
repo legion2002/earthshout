@@ -20,15 +20,39 @@ model User {
   @@map("users")
 }
 
-model Message {
+model Earthshout {
   id              Int      @id @default(autoincrement())
+  // Sender information
   senderAddress   String   @map("sender_address") @db.VarChar(42)
-  content         String
-  ethBurned       Float    @map("eth_burned")
+  
+  // On-chain data
+  yeetId          Int      @map("yeet_id")
+  tokenAddress    String   @map("token_address") @db.VarChar(42)
+  amountBurned    Float    @map("amount_burned")
   transactionHash String   @unique @map("transaction_hash") @db.VarChar(66)
-  createdAt       DateTime @default(now()) @map("created_at")
-  verified        Boolean  @default(true)
-  views           Int      @default(0)
+  blockNumber     Int      @map("block_number")
+  timestamp       DateTime @default(now())
+  
+  // Message content (decoded from calldata)
+  content         String?
+  
+  // Gift information (optional)
+  recipientAddress String?  @map("recipient_address") @db.VarChar(42)
+  giftAmount       Float?   @map("gift_amount")
+  
+  // Boost information (optional)
+  boostForYeetId   Int?     @map("boost_for_yeet_id")
+  
+  @@map("earthshouts")
+}
 
-  @@map("messages")
+// Track indexer progress
+model IndexerState {
+  id              Int      @id @default(autoincrement())
+  chainId         Int      @map("chain_id")
+  lastBlockNumber Int      @map("last_block_number")
+  updatedAt       DateTime @default(now()) @map("updated_at")
+
+  @@unique([chainId])
+  @@map("indexer_state")
 }

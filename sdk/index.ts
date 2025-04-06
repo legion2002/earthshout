@@ -1,25 +1,29 @@
-import { ethers } from "ethers";
-import { EARTHSHOUT_ABI } from "./abi";
-
-// This would be the deployed contract address in production
-const EARTHSHOUT_CONTRACT_ADDRESS =
-  "0xDB875C7987584ED9Ccec95da132501eCeB145b13";
+import {
+  createPublicClient,
+  http,
+  formatEther,
+  parseEther,
+  getContract,
+  type PublicClient,
+  type Address,
+} from "viem";
+import { mainnet } from "viem/chains";
+import { EARTHSHOUT_ABI, VOID_CONTRACT_ADDRESS } from "./abi";
 
 export class EarthshoutSDK {
-  private provider: ethers.Provider;
-  private contract: ethers.Contract;
+  private client: PublicClient;
+  private contractAddress: Address;
 
   /**
    * Create a new Earthshout SDK instance
    * @param {string} providerUrl - The Ethereum provider URL (e.g., Infura, Alchemy)
    */
   constructor(providerUrl: string) {
-    this.provider = new ethers.JsonRpcProvider(providerUrl);
-    this.contract = new ethers.Contract(
-      EARTHSHOUT_CONTRACT_ADDRESS,
-      EARTHSHOUT_ABI,
-      this.provider
-    );
+    this.client = createPublicClient({
+      chain: mainnet,
+      transport: http(providerUrl),
+    });
+    this.contractAddress = VOID_CONTRACT_ADDRESS;
   }
 
   /**
@@ -41,38 +45,55 @@ export class EarthshoutSDK {
   ): () => void {
     const { minEthBurned = 0 } = options;
 
-    // Create a filter for the Shout event
-    const filter = this.contract.filters.Shout();
+    // Watch for Yeet events
+    const unwatch = this.client.watchEvent({
+      address: this.contractAddress,
+      event: {
+        type: "event",
+        name: "Yeet",
+        inputs: [
+          { name: "token", type: "address", indexed: true },
+          { name: "amount", type: "uint256", indexed: true },
+          { name: "from", type: "address", indexed: true },
+          { name: "yeetId", type: "uint256", indexed: false },
+        ],
+      },
+      onLogs: async (logs) => {
+        for (const log of logs) {
+          const { token, amount, from, yeetId } = log.args;
+          if (token && amount && from) {
+            const ethAmount = formatEther(amount);
 
-    // Event handler for the Shout event
-    const handleShout = (
-      sender: string,
-      message: string,
-      amount: bigint,
-      timestamp: bigint,
-      event: any
-    ) => {
-      const ethAmount = ethers.formatEther(amount);
+            // Filter messages by minimum ETH burned
+            if (parseFloat(ethAmount) >= minEthBurned) {
+              // Get transaction for message content
+              const tx = await this.client.getTransaction({
+                hash: log.transactionHash,
+              });
 
-      // Filter messages by minimum ETH burned
-      if (parseFloat(ethAmount) >= minEthBurned) {
-        callback({
-          sender,
-          content: message,
-          ethBurned: ethAmount,
-          timestamp: new Date(Number(timestamp) * 1000),
-          transactionHash: event.log.transactionHash,
-        });
-      }
-    };
+              // Attempt to extract content from input data
+              let content = tx.input || "";
 
-    // Start listening for events
-    this.contract.on(filter, handleShout);
+              // Get block timestamp
+              const block = await this.client.getBlock({
+                blockNumber: log.blockNumber,
+              });
+
+              callback({
+                sender: from,
+                content,
+                ethBurned: ethAmount,
+                timestamp: new Date(Number(block.timestamp) * 1000),
+                transactionHash: log.transactionHash,
+              });
+            }
+          }
+        }
+      },
+    });
 
     // Return unsubscribe function
-    return () => {
-      this.contract.off(filter, handleShout);
-    };
+    return unwatch;
   }
 
   /**
@@ -87,36 +108,55 @@ export class EarthshoutSDK {
     options: {
       minEthBurned?: number;
       fromBlock?: number;
-      toBlock?: number | string;
+      toBlock?: number | "latest";
     } = {}
   ) {
     const { minEthBurned = 0, fromBlock = 0, toBlock = "latest" } = options;
 
-    // Create a filter for the Shout event
-    const filter = this.contract.filters.Shout();
-
     // Query historical events
-    const events = await this.contract.queryFilter(filter, fromBlock, toBlock);
+    const logs = await this.client.getLogs({
+      address: this.contractAddress,
+      event: {
+        type: "event",
+        name: "Yeet",
+        inputs: [
+          { name: "token", type: "address", indexed: true },
+          { name: "amount", type: "uint256", indexed: true },
+          { name: "from", type: "address", indexed: true },
+          { name: "yeetId", type: "uint256", indexed: false },
+        ],
+      },
+      fromBlock: BigInt(fromBlock),
+      toBlock: toBlock === "latest" ? undefined : BigInt(toBlock),
+    });
 
     // Process and filter the events
     const messages = await Promise.all(
-      events.map(async (event: any) => {
-        const [sender, message, amount, timestamp] = event.args || [];
-        const ethAmount = ethers.formatEther(amount);
+      logs.map(async (log) => {
+        const { token, amount, from, yeetId } = log.args;
+        if (token && amount && from) {
+          const ethAmount = formatEther(amount);
 
-        // Filter by minimum ETH burned
-        if (parseFloat(ethAmount) >= minEthBurned) {
-          const block = await event.getBlock();
+          // Filter by minimum ETH burned
+          if (parseFloat(ethAmount) >= minEthBurned) {
+            const block = await this.client.getBlock({
+              blockNumber: log.blockNumber,
+            });
 
-          return {
-            sender,
-            content: message,
-            ethBurned: ethAmount,
-            timestamp: new Date(Number(timestamp) * 1000),
-            transactionHash: event.transactionHash,
-            blockNumber: event.blockNumber,
-            blockTimestamp: new Date(block.timestamp * 1000),
-          };
+            const tx = await this.client.getTransaction({
+              hash: log.transactionHash,
+            });
+
+            return {
+              sender: from,
+              content: tx.input || "",
+              ethBurned: ethAmount,
+              timestamp: new Date(Number(block.timestamp) * 1000),
+              transactionHash: log.transactionHash,
+              blockNumber: Number(log.blockNumber),
+              blockTimestamp: new Date(Number(block.timestamp) * 1000),
+            };
+          }
         }
 
         return null;
@@ -134,17 +174,28 @@ export class EarthshoutSDK {
    * @returns {Promise<string>} Total ETH burned in ETH
    */
   async getTotalEthBurned(): Promise<string> {
-    // Get all Shout events
-    const filter = this.contract.filters.Shout();
-    const events = await this.contract.queryFilter(filter);
+    // Get all Yeet events
+    const logs = await this.client.getLogs({
+      address: this.contractAddress,
+      event: {
+        type: "event",
+        name: "Yeet",
+        inputs: [
+          { name: "token", type: "address", indexed: true },
+          { name: "amount", type: "uint256", indexed: true },
+          { name: "from", type: "address", indexed: true },
+          { name: "yeetId", type: "uint256", indexed: false },
+        ],
+      },
+    });
 
     // Sum up the ETH burned
-    const totalBurned = events.reduce((total, event) => {
-      const amount = event.args![2]; // The amount is the third argument
-      return total + BigInt(amount.toString());
+    const totalBurned = logs.reduce((total, log) => {
+      const amount = log.args.amount;
+      return amount ? total + amount : total;
     }, BigInt(0));
 
-    return ethers.formatEther(totalBurned);
+    return formatEther(totalBurned);
   }
 
   /**
@@ -153,7 +204,7 @@ export class EarthshoutSDK {
    * @returns {Promise<Array>} Array of message objects
    */
   async getTopMessages(limit: number = 10) {
-    // Get all Shout events
+    // Get all messages
     const allMessages = await this.getHistoricalMessages();
 
     // Sort by ETH burned (highest first) and limit results

@@ -1,14 +1,22 @@
-import { useState, useEffect } from 'react';
-import { useQuery, useMutation } from '@tanstack/react-query';
-import { useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { z } from 'zod';
-import { useWallet } from '@/contexts/WalletContext';
-import { queryClient, apiRequest } from '@/lib/queryClient';
-import { createEarthshout } from '@/lib/ethereum';
-import { Megaphone, Info, X } from 'lucide-react';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogDescription, DialogClose } from '@/components/ui/dialog';
-import { Button } from '@/components/ui/button';
+import { useState, useEffect } from "react";
+import { useQuery, useMutation } from "@tanstack/react-query";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { z } from "zod";
+import { useWallet } from "@/contexts/WalletContext";
+import { queryClient, apiRequest } from "@/lib/queryClient";
+import { createYeet } from "@/lib/ethereum";
+import { Megaphone, Info, X } from "lucide-react";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogFooter,
+  DialogDescription,
+  DialogClose,
+} from "@/components/ui/dialog";
+import { Button } from "@/components/ui/button";
 import {
   Form,
   FormControl,
@@ -18,41 +26,52 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import { Input } from '@/components/ui/input';
-import { Textarea } from '@/components/ui/textarea';
-import { Checkbox } from '@/components/ui/checkbox';
-import { Alert, AlertDescription } from '@/components/ui/alert';
-import { useToast } from '@/hooks/use-toast';
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Alert, AlertDescription } from "@/components/ui/alert";
+import { useToast } from "@/hooks/use-toast";
 
 const createShoutSchema = z.object({
-  ethAmount: z.string()
+  ethAmount: z
+    .string()
     .min(1, { message: "ETH amount is required" })
-    .refine(value => !isNaN(parseFloat(value)), { message: "ETH amount must be a number" })
-    .refine(value => parseFloat(value) >= 0.01, { message: "ETH amount must be at least 0.01" }),
-  message: z.string()
+    .refine((value) => !isNaN(parseFloat(value)), {
+      message: "ETH amount must be a number",
+    })
+    .refine((value) => parseFloat(value) >= 0.01, {
+      message: "ETH amount must be at least 0.01",
+    }),
+  message: z
+    .string()
     .min(10, { message: "Message must be at least 10 characters" })
     .max(500, { message: "Message cannot exceed 500 characters" }),
-  confirmBurn: z.boolean().refine(value => value === true, {
-    message: "You must confirm you want to burn ETH"
-  })
+  confirmBurn: z.boolean().refine((value) => value === true, {
+    message: "You must confirm you want to burn ETH",
+  }),
 });
 
 type CreateShoutFormValues = z.infer<typeof createShoutSchema>;
 
 export default function CreateShoutModal() {
-  const { isCreateShoutModalOpen, closeCreateShoutModal, address, isConnected } = useWallet();
+  const {
+    isCreateShoutModalOpen,
+    closeCreateShoutModal,
+    address,
+    isConnected,
+  } = useWallet();
   const [currentEthPrice, setCurrentEthPrice] = useState<number | null>(null);
   const { toast } = useToast();
 
   // Fetch current ETH price
   const { data: ethPriceData } = useQuery({
-    queryKey: ['/api/eth-price'],
+    queryKey: ["/api/eth-price"],
     queryFn: async () => {
-      const response = await fetch('/api/eth-price');
-      if (!response.ok) throw new Error('Failed to fetch ETH price');
+      const response = await fetch("/api/eth-price");
+      if (!response.ok) throw new Error("Failed to fetch ETH price");
       return response.json();
     },
-    enabled: isCreateShoutModalOpen
+    enabled: isCreateShoutModalOpen,
   });
 
   useEffect(() => {
@@ -64,10 +83,10 @@ export default function CreateShoutModal() {
   const form = useForm<CreateShoutFormValues>({
     resolver: zodResolver(createShoutSchema),
     defaultValues: {
-      ethAmount: '0.1',
-      message: '',
-      confirmBurn: false
-    }
+      ethAmount: "0.1",
+      message: "",
+      confirmBurn: false,
+    },
   });
 
   const { mutate: createMessage, isPending } = useMutation({
@@ -77,10 +96,10 @@ export default function CreateShoutModal() {
       ethBurned: number;
       transactionHash: string;
     }) => {
-      return apiRequest('POST', '/api/messages', data);
+      return apiRequest("POST", "/api/earthshouts", data);
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['/api/messages'] });
+      queryClient.invalidateQueries({ queryKey: ["/api/earthshouts"] });
       toast({
         title: "Earthshout created!",
         description: "Your message has been broadcast to the world.",
@@ -94,7 +113,7 @@ export default function CreateShoutModal() {
         description: error.message,
         variant: "destructive",
       });
-    }
+    },
   });
 
   const onSubmit = async (data: CreateShoutFormValues) => {
@@ -109,15 +128,18 @@ export default function CreateShoutModal() {
 
     try {
       const ethAmount = parseFloat(data.ethAmount);
+      // Use ETH address (zero address) as token
+      const zeroAddress =
+        "0x0000000000000000000000000000000000000000" as `0x${string}`;
       // Call the contract to burn ETH
-      const tx = await createEarthshout(ethAmount, data.message);
-      
+      const tx = await createYeet(zeroAddress, data.ethAmount, data.message);
+
       // Save the message to our database
       createMessage({
         senderAddress: address,
         content: data.message,
         ethBurned: ethAmount,
-        transactionHash: tx.hash
+        transactionHash: tx.hash,
       });
     } catch (error: any) {
       toast({
@@ -128,50 +150,71 @@ export default function CreateShoutModal() {
     }
   };
 
-  const ethAmount = parseFloat(form.watch('ethAmount') || '0');
-  const messageText = form.watch('message') || '';
-  const usdValue = isNaN(ethAmount) || !currentEthPrice ? 0 : ethAmount * currentEthPrice;
+  const ethAmount = parseFloat(form.watch("ethAmount") || "0");
+  const messageText = form.watch("message") || "";
+  const usdValue =
+    isNaN(ethAmount) || !currentEthPrice ? 0 : ethAmount * currentEthPrice;
 
   return (
     <Dialog open={isCreateShoutModalOpen} onOpenChange={closeCreateShoutModal}>
       <DialogContent className="sm:max-w-md">
-        <button 
+        <button
           onClick={closeCreateShoutModal}
           className="absolute right-4 top-4 rounded-sm opacity-70 transition-opacity hover:opacity-100 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:pointer-events-none"
           aria-label="Close"
         >
-          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="h-4 w-4">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="24"
+            height="24"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            className="h-4 w-4"
+          >
             <line x1="18" y1="6" x2="6" y2="18"></line>
             <line x1="6" y1="6" x2="18" y2="18"></line>
           </svg>
         </button>
         <DialogHeader>
-          <DialogTitle className="text-base font-medium font-display">Create New Earthshout</DialogTitle>
+          <DialogTitle className="text-base font-medium font-display">
+            Create New Earthshout
+          </DialogTitle>
           <DialogDescription className="text-xs text-muted-foreground">
             Burn ETH to broadcast your message to the world
           </DialogDescription>
         </DialogHeader>
-        
+
         <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4 pt-2">
+          <form
+            onSubmit={form.handleSubmit(onSubmit)}
+            className="space-y-4 pt-2"
+          >
             <FormField
               control={form.control}
               name="ethAmount"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel className="text-sm font-medium">ETH Amount to Burn</FormLabel>
+                  <FormLabel className="text-sm font-medium">
+                    ETH Amount to Burn
+                  </FormLabel>
                   <FormControl>
                     <div className="relative">
-                      <Input 
-                        type="number" 
-                        placeholder="0.00" 
-                        min="0.01" 
+                      <Input
+                        type="number"
+                        placeholder="0.00"
+                        min="0.01"
                         step="0.01"
                         {...field}
                         className="pr-12 h-9"
                       />
                       <div className="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
-                        <span className="text-muted-foreground text-sm">ETH</span>
+                        <span className="text-muted-foreground text-sm">
+                          ETH
+                        </span>
                       </div>
                     </div>
                   </FormControl>
@@ -188,10 +231,12 @@ export default function CreateShoutModal() {
               name="message"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel className="text-sm font-medium">Your Message</FormLabel>
+                  <FormLabel className="text-sm font-medium">
+                    Your Message
+                  </FormLabel>
                   <FormControl>
-                    <Textarea 
-                      placeholder="What do you want to tell the world?" 
+                    <Textarea
+                      placeholder="What do you want to tell the world?"
                       maxLength={500}
                       rows={3}
                       {...field}
@@ -199,7 +244,9 @@ export default function CreateShoutModal() {
                     />
                   </FormControl>
                   <div className="flex justify-end mt-1">
-                    <span className="text-xs text-muted-foreground">{messageText.length}/500</span>
+                    <span className="text-xs text-muted-foreground">
+                      {messageText.length}/500
+                    </span>
                   </div>
                   <FormMessage />
                 </FormItem>
@@ -209,7 +256,9 @@ export default function CreateShoutModal() {
             <Alert className="bg-background border border-border py-2">
               <Info className="h-4 w-4 text-primary" />
               <AlertDescription className="text-xs">
-                <span className="font-medium text-foreground">Important:</span> ETH sent will be permanently burned and your message will be publicly viewable on the blockchain forever.
+                <span className="font-medium text-foreground">Important:</span>{" "}
+                ETH sent will be permanently burned and your message will be
+                publicly viewable on the blockchain forever.
               </AlertDescription>
             </Alert>
 
@@ -232,12 +281,18 @@ export default function CreateShoutModal() {
                 </FormItem>
               )}
             />
-            
+
             <DialogFooter className="flex justify-end space-x-2 pt-2">
-              <Button type="button" variant="outline" size="sm" onClick={closeCreateShoutModal} className="text-sm">
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                onClick={closeCreateShoutModal}
+                className="text-sm"
+              >
                 Cancel
               </Button>
-              <Button 
+              <Button
                 type="submit"
                 size="sm"
                 disabled={isPending || !form.formState.isValid}

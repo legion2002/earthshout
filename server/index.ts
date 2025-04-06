@@ -1,6 +1,7 @@
 import express, { type Request, Response, NextFunction } from "express";
 import { registerRoutes } from "./routes";
 import { setupVite, serveStatic, log } from "./vite";
+import { createIndexer } from "./indexer";
 
 const app = express();
 app.use(express.json());
@@ -56,15 +57,39 @@ app.use((req, res, next) => {
     serveStatic(app);
   }
 
+  // Start the indexer
+  const RPC_URL =
+    process.env.ETHEREUM_RPC_URL ||
+    `https://eth-mainnet.g.alchemy.com/v2/${process.env.ALCHEMY_API_KEY}`;
+  const CHAIN_ID = parseInt(process.env.CHAIN_ID || "1", 10);
+
+  try {
+    const indexer = createIndexer(RPC_URL, CHAIN_ID);
+    await indexer.start();
+    log(`🔍 Indexer started for chain ID ${CHAIN_ID}`);
+
+    // Graceful shutdown
+    process.on("SIGINT", async () => {
+      log("Shutting down indexer...");
+      await indexer.stop();
+      process.exit(0);
+    });
+  } catch (error) {
+    console.error("Failed to start indexer:", error);
+  }
+
   // ALWAYS serve the app on port 5000
   // this serves both the API and the client.
   // It is the only port that is not firewalled.
   const port = 3000;
-  server.listen({
-    port,
-    host: "0.0.0.0",
-    reusePort: true,
-  }, () => {
-    log(`serving on port ${port}`);
-  });
+  server.listen(
+    {
+      port,
+      host: "0.0.0.0",
+      reusePort: true,
+    },
+    () => {
+      log(`🚀 Server running on port ${port}`);
+    }
+  );
 })();
