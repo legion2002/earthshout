@@ -5,8 +5,11 @@ import { insertEarthshoutSchema } from "@shared/schema";
 import { z } from "zod";
 
 export async function registerRoutes(app: Express): Promise<Server> {
-  // Seed the database with sample data if it's empty
-  if ("seedDatabaseIfEmpty" in storage) {
+  // Seed the database with sample data if it's empty (development only)
+  if (
+    process.env.NODE_ENV !== "production" &&
+    "seedDatabaseIfEmpty" in storage
+  ) {
     await (storage as any).seedDatabaseIfEmpty();
   }
 
