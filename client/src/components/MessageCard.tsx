@@ -70,7 +70,7 @@ export default function MessageCard({ message }: MessageCardProps) {
                 </div>
 
                 <div className="flex-shrink-0 bg-primary/5 border border-primary/30 px-2.5 py-1 rounded-full text-primary text-sm font-mono font-medium">
-                  {message.ethBurned.toFixed(1)} ETH
+                  {message.amountBurned.toFixed(1)} ETH
                 </div>
               </div>
 
